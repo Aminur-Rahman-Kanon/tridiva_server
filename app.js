@@ -3,8 +3,9 @@ const app = express();
 const cors = require('cors');
 require('dotenv').config();
 app.use(express.json());
-app.use(cors({ origin: ['http://localhost:3000', 'https://tridiva-client.onrender.com'] }));
+app.use(cors({ origin: ['https://tridivait.co.uk', 'http://localhost:3000', 'https://tridiva-client.onrender.com'] }));
 const serviceRoute = require('./routes/serviceHandler/serviceHandler');
+const { cronJob } = require('./utilities/utilities');
 
 //handling local routes
 app.use('/service', serviceRoute);
@@ -16,5 +17,6 @@ app.listen(process.env.PORT || '8080', (err) => {
     if (err) {
         console.log(err);
     }
+    cronJob();
     console.log('server is listening to port 8080');
 });
