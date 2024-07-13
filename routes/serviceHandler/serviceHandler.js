@@ -13,26 +13,48 @@ const transporter = nodemailer.createTransport({
 });
 
 router.post('/', upload.single('attachment') ,async (req, res) => {
-  const data = req.body;
+  let data = req.body;
   const attachment = req.file;
 
-  try {
-    const info = await transporter.sendMail({
-      from: 'TridivaIT <tridivait.co.uk>',
-      // to: 'kanon754@gmail.com',
-      to: 'info@tridivait.co.uk',
-      subject: 'New Query Received',
-      text: `A new query has been received\nName: ${data.name}\nEmail: ${data.address}\nService: ${data.service}`,
-      attachments: [{
-        filename: attachment.originalname,
-        content: attachment.buffer
-      }]
-    })
-    return res.status(200).json({ status: 'success' });
+  if (data.data){
+    data = JSON.parse(data.data)
   }
-  catch (e) {
-    return res.status(500).json({ status: 'failed' });
+
+  if (attachment){
+    try {
+      await transporter.sendMail({
+        from: 'TridivaIT <tridivait.co.uk>',
+        // to: 'kanon754@gmail.com',
+        to: 'info@tridivait.co.uk',
+        subject: 'New Query Received',
+        text: `A new query has been received\nName: ${data.name}\nEmail: ${data.address}\nService: ${data.service}`,
+        attachments: [{
+          filename: attachment.originalname,
+          content: attachment.buffer
+        }]
+      })
+      return res.status(200).json({ status: 'success' });
+    }
+    catch (e) {
+      return res.status(500).json({ status: 'failed' });
+    }
   }
+  else {
+    try {
+      await transporter.sendMail({
+        from: 'TridivaIT <tridivait.co.uk>',
+        // to: 'kanon754@gmail.com',
+        to: 'info@tridivait.co.uk',
+        subject: 'New Query Received',
+        text: `A new query has been received\nName: ${data.name}\nEmail: ${data.address}\nService: ${data.service}`,
+      })
+      return res.status(200).json({ status: 'success' });
+    }
+    catch (e) {
+      return res.status(500).json({ status: 'failed' });
+    }
+  }
+  
 })
 
 module.exports = router;
